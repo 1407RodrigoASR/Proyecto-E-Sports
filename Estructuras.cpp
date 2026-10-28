@@ -85,6 +85,26 @@ int buscarJugador(ListaJugadores *lista, int id) {
     return -1;
 }
 
+void buscarJugadorUI(ListaJugadores *lista) {
+    if(lista->tamano == 0) {
+        cout << "\nNo existen jugadores.\n";
+        return;
+    }
+    int id;
+    cout << "\nIngrese el ID a buscar: ";
+    cin >> id;
+    int pos = buscarJugador(lista, id);
+    if(pos != -1) {
+        cout << "\nJugador encontrado:";
+        cout << "\nID: " << lista->elementos[pos].idJugador;
+        cout << "\nAlias: " << lista->elementos[pos].alias;
+        cout << "\nNombre: " << lista->elementos[pos].nombre;
+        cout << "\nRanking: " << lista->elementos[pos].ranking << "\n";
+    } else {
+        cout << "\nJugador no encontrado.\n";
+    }
+}
+
 // Registra un nuevo jugador
 void registrarJugador(ListaJugadores *lista) {
 
