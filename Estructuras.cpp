@@ -72,10 +72,6 @@ void inicializarPila(PilaHistorial *pila) {
     pila->tope = -1;
 }
 
-//=====================================================
-// FUNCIONES PARA JUGADORES
-//=====================================================
-
 // Busca un jugador por ID
 int buscarJugador(ListaJugadores *lista, int id) {
 
