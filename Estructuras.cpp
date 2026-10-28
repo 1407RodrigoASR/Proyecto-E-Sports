@@ -121,6 +121,64 @@ void registrarJugador(ListaJugadores *lista) {
     cout << "\nJugador registrado correctamente.\n";
 }
 
+void actualizarJugador(ListaJugadores* lista) {
+    if (lista->tamano == 0) {
+        cout << "\n--- No hay jugadores para actualizar. ---\n";
+        return;
+    }
+
+    int id;
+    cout << "\nIngrese el ID del jugador a actualizar: ";
+    cin >> id;
+
+    for (int i = 0; i < lista->tamano; i++) {
+        Jugador* ptrJ = &lista->elementos[i];
+        if (ptrJ->idJugador == id) {
+            cout << "\n--- Ingrese los nuevos datos ---" << endl;
+            cin.ignore();
+            cout << "Nuevo Alias: ";
+            cin.getline(ptrJ->alias, 30);
+
+            cout << "Nuevo Nombre: ";
+            cin.getline(ptrJ->nombre, 50);
+
+            cout << "Nuevo Ranking: ";
+            cin >> ptrJ->ranking;
+
+            cout << ">> Jugador actualizado con exito.\n";
+            return;
+        }
+    }
+    cout << ">> No se encontro un jugador con ese ID.\n";
+}
+
+bool retirarJugador(ListaJugadores* lista) {
+    if (lista->tamano == 0) {
+        cout << "\n--- No hay jugadores para retirar. ---\n";
+        return false;
+    }
+
+    int id;
+    cout << "\nIngrese ID a retirar: ";
+    cin >> id;
+
+    for (int i = 0; i < lista->tamano; i++) {
+        Jugador* ptrJ = &lista->elementos[i];
+        if (ptrJ->idJugador == id) {
+            for (int j = i; j < lista->tamano - 1; j++) {
+                Jugador* ptrActual = &lista->elementos[j];
+                Jugador* ptrSiguiente = &lista->elementos[j + 1];
+                *ptrActual = *ptrSiguiente;
+            }
+            lista->tamano--;
+            cout << ">> Jugador retirado correctamente.\n";
+            return true;
+        }
+    }
+    cout << ">> No se encontro el ID.\n";
+    return false;
+}
+
 // Mostrar todos los jugadores
 void mostrarJugadores(ListaJugadores *lista) {
 
