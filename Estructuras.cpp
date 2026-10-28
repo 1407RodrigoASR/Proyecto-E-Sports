@@ -456,10 +456,7 @@ void reporteGeneral(
     cout << "\n==========================";
 }
 
-//=====================================================
 // MAIN
-//=====================================================
-
 int main() {
 
     ListaJugadores jugadores;
@@ -476,13 +473,16 @@ int main() {
 
         cout << "\n\n========== TORNEO E-SPORTS ==========";
         cout << "\n1. Registrar jugador";
-        cout << "\n2. Mostrar jugadores";
-        cout << "\n3. Programar partida";
-        cout << "\n4. Mostrar partidas";
-        cout << "\n5. Registrar resultado";
-        cout << "\n6. Ver historial";
-        cout << "\n7. Reporte general";
-        cout << "\n8. Salir";
+        cout << "\n2. Buscar jugador por ID";
+        cout << "\n3. Actualizar jugador";
+        cout << "\n4. Retirar jugador";
+        cout << "\n5. Mostrar jugadores";
+        cout << "\n6. Programar partida";
+        cout << "\n7. Mostrar partidas";
+        cout << "\n8. Registrar resultado";
+        cout << "\n9. Ver historial";
+        cout << "\n10. Reporte general";
+        cout << "\n11. Salir";
         cout << "\nSeleccione una opcion: ";
         cin >> opcion;
 
@@ -493,30 +493,42 @@ int main() {
                 break;
 
             case 2:
-                mostrarJugadores(&jugadores);
+                buscarJugadorUI(&jugadores);
                 break;
 
             case 3:
-                programarPartida(&partidas,&jugadores);
+                actualizarJugador(&jugadores);
                 break;
 
             case 4:
-                mostrarPartidas(&partidas);
+                retirarJugador(&jugadores);
                 break;
 
             case 5:
-                registrarResultado(&partidas,&historial);
+                mostrarJugadores(&jugadores);
                 break;
 
             case 6:
-                mostrarHistorial(&historial);
+                programarPartida(&partidas, &jugadores);
                 break;
 
             case 7:
-                reporteGeneral(&jugadores,&partidas,&historial);
+                mostrarPartidas(&partidas);
                 break;
 
             case 8:
+                registrarResultado(&partidas, &historial);
+                break;
+
+            case 9:
+                mostrarHistorial(&historial);
+                break;
+
+            case 10:
+                reporteGeneral(&jugadores, &partidas, &historial);
+                break;
+
+            case 11:
                 cout << "\nGracias por utilizar el sistema.\n";
                 break;
 
@@ -524,7 +536,7 @@ int main() {
                 cout << "\nOpcion incorrecta.\n";
         }
 
-    }while(opcion != 8);
+    } while(opcion != 11);
 
     return 0;
 }
