@@ -116,7 +116,12 @@ void registrarJugador(ListaJugadores *lista) {
     Jugador nuevo;
 
     cout << "\nID del jugador: ";
-    cin >> nuevo.idJugador;
+    // Validar que se ingrese un número entero válido
+    while (!(cin >> nuevo.idJugador)) {
+        cout << ">> Error: Ingrese un numero entero valido para el ID: ";
+        cin.clear();
+        cin.ignore(10000, '\n');
+    }
 
     // Validar ID repetido
     if(buscarJugador(lista, nuevo.idJugador) != -1) {
@@ -124,7 +129,7 @@ void registrarJugador(ListaJugadores *lista) {
         return;
     }
 
-    cin.ignore();
+    cin.ignore(); // Limpiar el salto de línea pendiente para cin.getline
 
     cout << "Alias: ";
     cin.getline(nuevo.alias, 30);
@@ -133,14 +138,18 @@ void registrarJugador(ListaJugadores *lista) {
     cin.getline(nuevo.nombre, 50);
 
     cout << "Ranking: ";
-    cin >> nuevo.ranking;
+    // Validar que el ranking también sea un número entero
+    while (!(cin >> nuevo.ranking)) {
+        cout << ">> Error: Ingrese un numero entero valido para el Ranking: ";
+        cin.clear();
+        cin.ignore(10000, '\n');
+    }
 
     lista->elementos[lista->tamano] = nuevo;
     lista->tamano++;
 
     cout << "\nJugador registrado correctamente.\n";
 }
-
 void actualizarJugador(ListaJugadores* lista) {
     if (lista->tamano == 0) {
         cout << "\n--- No hay jugadores para actualizar. ---\n";
