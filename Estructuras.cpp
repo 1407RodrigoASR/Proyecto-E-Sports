@@ -11,7 +11,7 @@ using namespace std;
 
 struct Jugador {
     int idJugador;
-    char alias[30];
+    char alias[50];
     char nombre[50];
     int ranking;
 };
