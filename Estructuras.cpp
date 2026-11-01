@@ -9,7 +9,6 @@ using namespace std;
 // ESTRUCTURAS
 //=====================================================
 
-// Estructura para almacenar información de un jugador
 struct Jugador {
     int idJugador;
     char alias[30];
@@ -17,7 +16,6 @@ struct Jugador {
     int ranking;
 };
 
-// Estructura para almacenar una partida
 struct Partida {
     int idPartida;
     Jugador jugador1;
@@ -25,7 +23,6 @@ struct Partida {
     char estado[20];
 };
 
-// Estructura para almacenar resultados
 struct Resultado {
     int idPartida;
     int idGanador;
@@ -33,61 +30,51 @@ struct Resultado {
     int puntajeJ2;
 };
 
-// Lista estática de jugadores
 struct ListaJugadores {
     Jugador elementos[MAX];
     int tamano;
 };
 
-// Cola FIFO de partidas pendientes
 struct ColaPartidas {
     Partida elementos[MAX];
     int frente;
     int final;
 };
 
-// Pila LIFO para historial de resultados
 struct PilaHistorial {
     Resultado elementos[MAX];
     int tope;
 };
 
 //=====================================================
-// INICIALIZACIÓN
+// INICIALIZACIÓN Y BÚSQUEDA
 //=====================================================
 
-// Inicializa la lista de jugadores
 void inicializarLista(ListaJugadores *lista) {
     lista->tamano = 0;
 }
 
-// Inicializa la cola
 void inicializarCola(ColaPartidas *cola) {
     cola->frente = 0;
     cola->final = -1;
 }
 
-// Inicializa la pila
 void inicializarPila(PilaHistorial *pila) {
     pila->tope = -1;
 }
 
-// Busca un jugador por ID
 int buscarJugador(ListaJugadores *lista, int id) {
-
     for(int i = 0; i < lista->tamano; i++) {
-
         if(lista->elementos[i].idJugador == id) {
             return i;
         }
     }
-
     return -1;
 }
 
 void buscarJugadorUI(ListaJugadores *lista) {
     if(lista->tamano == 0) {
-        cout << "\nNo existen jugadores.\n";
+        cout << "\n[!] No existen jugadores registrados.\n";
         return;
     }
     int id;
@@ -95,52 +82,53 @@ void buscarJugadorUI(ListaJugadores *lista) {
     cin >> id;
     int pos = buscarJugador(lista, id);
     if(pos != -1) {
-        cout << "\nJugador encontrado:";
-        cout << "\nID: " << lista->elementos[pos].idJugador;
-        cout << "\nAlias: " << lista->elementos[pos].alias;
-        cout << "\nNombre: " << lista->elementos[pos].nombre;
-        cout << "\nRanking: " << lista->elementos[pos].ranking << "\n";
+        cout << "\n+---------------------------------------+";
+        cout << "\n|          JUGADOR ENCONTRADO           |";
+        cout << "\n+---------------------------------------+";
+        cout << "\n  ID      : " << lista->elementos[pos].idJugador;
+        cout << "\n  Alias   : " << lista->elementos[pos].alias;
+        cout << "\n  Nombre  : " << lista->elementos[pos].nombre;
+        cout << "\n  Ranking : " << lista->elementos[pos].ranking << " pts";
+        cout << "\n+---------------------------------------+\n";
     } else {
-        cout << "\nJugador no encontrado.\n";
+        cout << "\n[X] Jugador no encontrado.\n";
     }
 }
 
-// Registra un nuevo jugador
-void registrarJugador(ListaJugadores *lista) {
+//=====================================================
+// MÓDULO LISTA (JUGADORES)
+//=====================================================
 
+void registrarJugador(ListaJugadores *lista) {
     if(lista->tamano >= MAX) {
-        cout << "\nLista llena.\n";
+        cout << "\n[!] Error: Lista de jugadores llena.\n";
         return;
     }
 
     Jugador nuevo;
-
-    cout << "\nID del jugador: ";
-    // Validar que se ingrese un número entero válido
+    cout << "\n>>> REGISTRO DE NUEVO JUGADOR <<<\n";
+    cout << "ID del jugador : ";
     while (!(cin >> nuevo.idJugador)) {
-        cout << ">> Error: Ingrese un numero entero valido para el ID: ";
+        cout << "[!] Ingrese un numero entero valido para el ID: ";
         cin.clear();
         cin.ignore(10000, '\n');
     }
 
-    // Validar ID repetido
     if(buscarJugador(lista, nuevo.idJugador) != -1) {
-        cout << "El ID ya existe.\n";
+        cout << "\n[X] Error: El ID ya se encuentra registrado.\n";
         return;
     }
 
-    cin.ignore(); // Limpiar el salto de línea pendiente para cin.getline
-
-    cout << "Alias: ";
+    cin.ignore();
+    cout << "Alias          : ";
     cin.getline(nuevo.alias, 30);
 
     cout << "Nombre completo: ";
     cin.getline(nuevo.nombre, 50);
 
-    cout << "Ranking: ";
-    // Validar que el ranking también sea un número entero
+    cout << "Ranking        : ";
     while (!(cin >> nuevo.ranking)) {
-        cout << ">> Error: Ingrese un numero entero valido para el Ranking: ";
+        cout << "[!] Ingrese un numero entero valido para el Ranking: ";
         cin.clear();
         cin.ignore(10000, '\n');
     }
@@ -148,12 +136,12 @@ void registrarJugador(ListaJugadores *lista) {
     lista->elementos[lista->tamano] = nuevo;
     lista->tamano++;
 
-    cout << "\nJugador registrado correctamente.\n";
+    cout << "\n[V] Jugador registrado correctamente.\n";
 }
 
 void actualizarJugador(ListaJugadores* lista) {
     if (lista->tamano == 0) {
-        cout << "\n--- No hay jugadores para actualizar. ---\n";
+        cout << "\n[!] No hay jugadores para actualizar.\n";
         return;
     }
 
@@ -164,27 +152,27 @@ void actualizarJugador(ListaJugadores* lista) {
     for (int i = 0; i < lista->tamano; i++) {
         Jugador* ptrJ = &lista->elementos[i];
         if (ptrJ->idJugador == id) {
-            cout << "\n--- Ingrese los nuevos datos ---" << endl;
+            cout << "\n--- Ingrese los nuevos datos ---\n";
             cin.ignore();
-            cout << "Nuevo Alias: ";
+            cout << "Nuevo Alias  : ";
             cin.getline(ptrJ->alias, 30);
 
-            cout << "Nuevo Nombre: ";
+            cout << "Nuevo Nombre : ";
             cin.getline(ptrJ->nombre, 50);
 
             cout << "Nuevo Ranking: ";
             cin >> ptrJ->ranking;
 
-            cout << ">> Jugador actualizado con exito.\n";
+            cout << "\n[V] Jugador actualizado con exito.\n";
             return;
         }
     }
-    cout << ">> No se encontro un jugador con ese ID.\n";
+    cout << "\n[X] No se encontro un jugador con ese ID.\n";
 }
 
 bool retirarJugador(ListaJugadores* lista) {
     if (lista->tamano == 0) {
-        cout << "\n--- No hay jugadores para retirar. ---\n";
+        cout << "\n[!] No hay jugadores para retirar.\n";
         return false;
     }
 
@@ -201,61 +189,48 @@ bool retirarJugador(ListaJugadores* lista) {
                 *ptrActual = *ptrSiguiente;
             }
             lista->tamano--;
-            cout << ">> Jugador retirado correctamente.\n";
+            cout << "\n[V] Jugador retirado correctamente.\n";
             return true;
         }
     }
-    cout << ">> No se encontro el ID.\n";
+    cout << "\n[X] No se encontro el ID.\n";
     return false;
 }
 
-// Mostrar todos los jugadores
 void mostrarJugadores(ListaJugadores *lista) {
-
     if(lista->tamano == 0) {
-        cout << "\nNo existen jugadores.\n";
+        cout << "\n[!] No existen jugadores registrados.\n";
         return;
     }
 
-    cout << "\n===== LISTA DE JUGADORES =====\n";
+    cout << "\n=========================================================\n";
+    cout << "                   LISTA DE JUGADORES                    \n";
+    cout << "=========================================================\n";
 
     for(int i = 0; i < lista->tamano; i++) {
-
-        cout << "\nID: "
-             << lista->elementos[i].idJugador;
-
-        cout << "\nAlias: "
-             << lista->elementos[i].alias;
-
-        cout << "\nNombre: "
-             << lista->elementos[i].nombre;
-
-        cout << "\nRanking: "
-             << lista->elementos[i].ranking;
-
-        cout << "\n------------------------------";
+        cout << "  ID: " << lista->elementos[i].idJugador
+             << " | Alias: " << lista->elementos[i].alias
+             << " | Nombre: " << lista->elementos[i].nombre
+             << " | Ranking: " << lista->elementos[i].ranking << " pts\n";
+        cout << "---------------------------------------------------------\n";
     }
 }
 
 //=====================================================
-// FUNCIONES DE COLA (FIFO)
+// MÓDULO COLA (PARTIDAS)
 //=====================================================
 
-// Verificar si la cola está vacía
 bool colaVacia(ColaPartidas *cola) {
     return cola->final < cola->frente;
 }
 
-// Verificar si la cola está llena
 bool colaLlena(ColaPartidas *cola) {
     return cola->final == MAX - 1;
 }
 
-// Agregar una partida a la cola
 void encolarPartida(ColaPartidas *cola, Partida partida) {
-
     if(colaLlena(cola)) {
-        cout << "\nCola llena.\n";
+        cout << "\n[!] Error: Cola de partidas llena.\n";
         return;
     }
 
@@ -263,13 +238,10 @@ void encolarPartida(ColaPartidas *cola, Partida partida) {
     cola->elementos[cola->final] = partida;
 }
 
-// Sacar una partida de la cola
 Partida desencolarPartida(ColaPartidas *cola) {
-
     Partida p;
-
     if(colaVacia(cola)) {
-        cout << "\nNo hay partidas.\n";
+        cout << "\n[!] No hay partidas pendientes.\n";
         return p;
     }
 
@@ -279,48 +251,71 @@ Partida desencolarPartida(ColaPartidas *cola) {
     return p;
 }
 
-// Mostrar partidas pendientes
 void mostrarPartidas(ColaPartidas *cola) {
-
     if(colaVacia(cola)) {
-        cout << "\nNo existen partidas pendientes.\n";
+        cout << "\n[!] No existen partidas pendientes.\n";
         return;
     }
 
-    cout << "\n===== PARTIDAS PENDIENTES =====\n";
+    cout << "\n=========================================================\n";
+    cout << "                  PARTIDAS PENDIENTES                    \n";
+    cout << "=========================================================\n";
 
     for(int i = cola->frente; i <= cola->final; i++) {
-
-        cout << "\nID Partida: "
-             << cola->elementos[i].idPartida;
-
-        cout << "\nJugador 1: "
-             << cola->elementos[i].jugador1.alias;
-
-        cout << "\nJugador 2: "
-             << cola->elementos[i].jugador2.alias;
-
-        cout << "\nEstado: "
-             << cola->elementos[i].estado;
-
-        cout << "\n-----------------------------";
+        cout << "  ID Partida     : #" << cola->elementos[i].idPartida << "\n";
+        cout << "  Enfrentamiento : " << cola->elementos[i].jugador1.alias 
+             << " VS " << cola->elementos[i].jugador2.alias << "\n";
+        cout << "  Estado         : " << cola->elementos[i].estado << "\n";
+        cout << "---------------------------------------------------------\n";
     }
 }
 
+void programarPartida(ColaPartidas *cola, ListaJugadores *lista) {
+    if(lista->tamano < 2) {
+        cout << "\n[!] Debe registrar al menos 2 jugadores para programar partidas.\n";
+        return;
+    }
+
+    Partida partida;
+    int id1, id2;
+
+    cout << "\n>>> PROGRAMAR NUEVA PARTIDA <<<\n";
+    cout << "ID Partida   : ";
+    cin >> partida.idPartida;
+
+    cout << "ID Jugador 1 : ";
+    cin >> id1;
+
+    cout << "ID Jugador 2 : ";
+    cin >> id2;
+
+    int pos1 = buscarJugador(lista, id1);
+    int pos2 = buscarJugador(lista, id2);
+
+    if(pos1 == -1 || pos2 == -1) {
+        cout << "\n[X] Error: Uno o ambos jugadores no existen.\n";
+        return;
+    }
+
+    partida.jugador1 = lista->elementos[pos1];
+    partida.jugador2 = lista->elementos[pos2];
+    strcpy(partida.estado, "Pendiente");
+
+    encolarPartida(cola, partida);
+    cout << "\n[V] Partida programada correctamente.\n";
+}
+
 //=====================================================
-// FUNCIONES DE PILA (LIFO)
+// MÓDULO PILA (HISTORIAL)
 //=====================================================
 
-// Verificar si la pila está vacía
 bool pilaVacia(PilaHistorial *pila) {
     return pila->tope == -1;
 }
 
-// Insertar resultado en la pila
 void pushResultado(PilaHistorial *pila, Resultado resultado) {
-
     if(pila->tope == MAX - 1) {
-        cout << "\nHistorial lleno.\n";
+        cout << "\n[!] Error: Historial lleno.\n";
         return;
     }
 
@@ -328,162 +323,73 @@ void pushResultado(PilaHistorial *pila, Resultado resultado) {
     pila->elementos[pila->tope] = resultado;
 }
 
-// Mostrar historial
 void mostrarHistorial(PilaHistorial *pila) {
-
     if(pilaVacia(pila)) {
-        cout << "\nNo existen resultados.\n";
+        cout << "\n[!] No existen resultados registrados en el historial.\n";
         return;
     }
 
-    cout << "\n===== HISTORIAL DE RESULTADOS =====\n";
+    cout << "\n=========================================================\n";
+    cout << "                 HISTORIAL DE RESULTADOS                 \n";
+    cout << "=========================================================\n";
 
     for(int i = pila->tope; i >= 0; i--) {
-
-        cout << "\nPartida: "
-             << pila->elementos[i].idPartida;
-
-        cout << "\nGanador ID: "
-             << pila->elementos[i].idGanador;
-
-        cout << "\nPuntaje J1: "
-             << pila->elementos[i].puntajeJ1;
-
-        cout << "\nPuntaje J2: "
-             << pila->elementos[i].puntajeJ2;
-
-        cout << "\n---------------------------";
+        cout << "  Partida ID  : #" << pila->elementos[i].idPartida << "\n";
+        cout << "  ID Ganador  : " << pila->elementos[i].idGanador << "\n";
+        cout << "  Puntajes    : J1 [" << pila->elementos[i].puntajeJ1 
+             << "] - J2 [" << pila->elementos[i].puntajeJ2 << "]\n";
+        cout << "---------------------------------------------------------\n";
     }
 }
 
-//=====================================================
-// PROGRAMAR PARTIDA
-//=====================================================
-
-void programarPartida(
-        ColaPartidas *cola,
-        ListaJugadores *lista) {
-
-    if(lista->tamano < 2) {
-
-        cout << "\nDebe registrar al menos 2 jugadores.\n";
-        return;
-    }
-
-    Partida partida;
-
-    int id1;
-    int id2;
-
-    cout << "\nID Partida: ";
-    cin >> partida.idPartida;
-
-    cout << "ID Jugador 1: ";
-    cin >> id1;
-
-    cout << "ID Jugador 2: ";
-    cin >> id2;
-
-    int pos1 = buscarJugador(lista,id1);
-    int pos2 = buscarJugador(lista,id2);
-
-    if(pos1 == -1 || pos2 == -1) {
-
-        cout << "\nJugador no encontrado.\n";
-        return;
-    }
-
-    partida.jugador1 = lista->elementos[pos1];
-    partida.jugador2 = lista->elementos[pos2];
-
-    strcpy(partida.estado,"Pendiente");
-
-    encolarPartida(cola, partida);
-
-    cout << "\nPartida programada correctamente.\n";
-}
-
-//=====================================================
-// REGISTRAR RESULTADO
-//=====================================================
-
-void registrarResultado(
-        ColaPartidas *cola,
-        PilaHistorial *historial) {
-
+void registrarResultado(ColaPartidas *cola, PilaHistorial *historial) {
     if(colaVacia(cola)) {
-
-        cout << "\nNo existen partidas pendientes.\n";
+        cout << "\n[!] No existen partidas pendientes para procesar.\n";
         return;
     }
 
-    Partida actual;
-
-    actual = desencolarPartida(cola);
-
+    Partida actual = desencolarPartida(cola);
     Resultado resultado;
 
     resultado.idPartida = actual.idPartida;
 
-    cout << "\nPartida "
-         << actual.idPartida;
+    cout << "\n>>> REGISTRANDO RESULTADO <<<\n";
+    cout << "Partida #" << actual.idPartida << ": " 
+         << actual.jugador1.alias << " VS " << actual.jugador2.alias << "\n\n";
 
-    cout << "\n"
-         << actual.jugador1.alias
-         << " VS "
-         << actual.jugador2.alias;
-
-    cout << "\n\nPuntaje Jugador 1: ";
+    cout << "Puntaje " << actual.jugador1.alias << " (J1): ";
     cin >> resultado.puntajeJ1;
 
-    cout << "Puntaje Jugador 2: ";
+    cout << "Puntaje " << actual.jugador2.alias << " (J2): ";
     cin >> resultado.puntajeJ2;
 
     if(resultado.puntajeJ1 > resultado.puntajeJ2) {
-
-        resultado.idGanador =
-        actual.jugador1.idJugador;
-
+        resultado.idGanador = actual.jugador1.idJugador;
     } else {
-
-        resultado.idGanador =
-        actual.jugador2.idJugador;
+        resultado.idGanador = actual.jugador2.idJugador;
     }
 
     pushResultado(historial, resultado);
-
-    cout << "\nResultado registrado correctamente.\n";
+    cout << "\n[V] Resultado registrado correctamente.\n";
 }
 
 //=====================================================
 // REPORTE GENERAL
 //=====================================================
 
-void reporteGeneral(
-        ListaJugadores *lista,
-        ColaPartidas *cola,
-        PilaHistorial *historial) {
-
-    cout << "\n===== REPORTE GENERAL =====";
-
-    cout << "\nJugadores: "
-         << lista->tamano;
-
+void reporteGeneral(ListaJugadores *lista, ColaPartidas *cola, PilaHistorial *historial) {
     int pendientes = 0;
-
     if(!colaVacia(cola)) {
-
-        pendientes =
-        cola->final - cola->frente + 1;
+        pendientes = cola->final - cola->frente + 1;
     }
 
-    cout << "\nPartidas pendientes: "
-         << pendientes;
-
-    cout << "\nResultados registrados: "
-         << historial->tope + 1;
-
-    cout << "\n==========================";
+    cout << "\n+---------------------------------------+";
+    cout << "\n|           REPORTE GENERAL             |";
+    cout << "\n+---------------------------------------+";
+    cout << "\n  Jugadores Registrados : " << lista->tamano;
+    cout << "\n  Partidas Pendientes   : " << pendientes;
+    cout << "\n  Resultados en Pila    : " << historial->tope + 1;
+    cout << "\n+---------------------------------------+\n";
 }
 
 //=====================================================
@@ -493,37 +399,27 @@ void reporteGeneral(
 void subMenuJugadores(ListaJugadores *jugadores) {
     int subOpcion;
     do {
-        cout << "\n\n--- GESTION DE JUGADORES (LISTAS) ---";
-        cout << "\n1. Registrar jugador";
-        cout << "\n2. Buscar jugador por ID";
-        cout << "\n3. Actualizar jugador";
-        cout << "\n4. Retirar jugador";
-        cout << "\n5. Mostrar jugadores";
-        cout << "\n6. Volver al menu principal";
-        cout << "\nSeleccione una opcion: ";
+        cout << "\n=========================================\n";
+        cout << "      GESTION DE JUGADORES (LISTAS)      \n";
+        cout << "=========================================\n";
+        cout << "  [1] Registrar jugador\n";
+        cout << "  [2] Buscar jugador por ID\n";
+        cout << "  [3] Actualizar jugador\n";
+        cout << "  [4] Retirar jugador\n";
+        cout << "  [5] Mostrar todos los jugadores\n";
+        cout << "  [6] Volver al menu principal\n";
+        cout << "-----------------------------------------\n";
+        cout << "Seleccione una opcion: ";
         cin >> subOpcion;
 
         switch(subOpcion) {
-            case 1:
-                registrarJugador(jugadores);
-                break;
-            case 2:
-                buscarJugadorUI(jugadores);
-                break;
-            case 3:
-                actualizarJugador(jugadores);
-                break;
-            case 4:
-                retirarJugador(jugadores);
-                break;
-            case 5:
-                mostrarJugadores(jugadores);
-                break;
-            case 6:
-                cout << "\nRegresando al menu principal...\n";
-                break;
-            default:
-                cout << "\nOpcion incorrecta.\n";
+            case 1: registrarJugador(jugadores); break;
+            case 2: buscarJugadorUI(jugadores); break;
+            case 3: actualizarJugador(jugadores); break;
+            case 4: retirarJugador(jugadores); break;
+            case 5: mostrarJugadores(jugadores); break;
+            case 6: cout << "\nRegresando al menu principal...\n"; break;
+            default: cout << "\n[!] Opcion invalida.\n";
         }
     } while(subOpcion != 6);
 }
@@ -531,25 +427,21 @@ void subMenuJugadores(ListaJugadores *jugadores) {
 void subMenuPartidas(ColaPartidas *partidas, ListaJugadores *jugadores) {
     int subOpcion;
     do {
-        cout << "\n\n--- GESTION DE PARTIDAS (COLAS) ---";
-        cout << "\n1. Programar partida";
-        cout << "\n2. Mostrar partidas pendientes";
-        cout << "\n3. Volver al menu principal";
-        cout << "\nSeleccione una opcion: ";
+        cout << "\n=========================================\n";
+        cout << "       GESTION DE PARTIDAS (COLAS)       \n";
+        cout << "=========================================\n";
+        cout << "  [1] Programar partida\n";
+        cout << "  [2] Mostrar partidas pendientes\n";
+        cout << "  [3] Volver al menu principal\n";
+        cout << "-----------------------------------------\n";
+        cout << "Seleccione una opcion: ";
         cin >> subOpcion;
 
         switch(subOpcion) {
-            case 1:
-                programarPartida(partidas, jugadores);
-                break;
-            case 2:
-                mostrarPartidas(partidas);
-                break;
-            case 3:
-                cout << "\nRegresando al menu principal...\n";
-                break;
-            default:
-                cout << "\nOpcion incorrecta.\n";
+            case 1: programarPartida(partidas, jugadores); break;
+            case 2: mostrarPartidas(partidas); break;
+            case 3: cout << "\nRegresando al menu principal...\n"; break;
+            default: cout << "\n[!] Opcion invalida.\n";
         }
     } while(subOpcion != 3);
 }
@@ -557,25 +449,21 @@ void subMenuPartidas(ColaPartidas *partidas, ListaJugadores *jugadores) {
 void subMenuHistorial(PilaHistorial *historial, ColaPartidas *partidas) {
     int subOpcion;
     do {
-        cout << "\n\n--- HISTORIAL DE RESULTADOS (PILAS) ---";
-        cout << "\n1. Registrar resultado de partida";
-        cout << "\n2. Ver historial de resultados";
-        cout << "\n3. Volver al menu principal";
-        cout << "\nSeleccione una opcion: ";
+        cout << "\n=========================================\n";
+        cout << "     HISTORIAL DE RESULTADOS (PILAS)     \n";
+        cout << "=========================================\n";
+        cout << "  [1] Registrar resultado de partida\n";
+        cout << "  [2] Ver historial de resultados\n";
+        cout << "  [3] Volver al menu principal\n";
+        cout << "-----------------------------------------\n";
+        cout << "Seleccione una opcion: ";
         cin >> subOpcion;
 
         switch(subOpcion) {
-            case 1:
-                registrarResultado(partidas, historial);
-                break;
-            case 2:
-                mostrarHistorial(historial);
-                break;
-            case 3:
-                cout << "\nRegresando al menu principal...\n";
-                break;
-            default:
-                cout << "\nOpcion incorrecta.\n";
+            case 1: registrarResultado(partidas, historial); break;
+            case 2: mostrarHistorial(historial); break;
+            case 3: cout << "\nRegresando al menu principal...\n"; break;
+            default: cout << "\n[!] Opcion invalida.\n";
         }
     } while(subOpcion != 3);
 }
@@ -585,7 +473,6 @@ void subMenuHistorial(PilaHistorial *historial, ColaPartidas *partidas) {
 //=====================================================
 
 int main() {
-
     ListaJugadores jugadores;
     ColaPartidas partidas;
     PilaHistorial historial;
@@ -597,40 +484,30 @@ int main() {
     int opcion;
 
     do {
-
-        cout << "\n\n========== TORNEO E-SPORTS ==========";
-        cout << "\n1. Modulo de Jugadores (Lista)";
-        cout << "\n2. Modulo de Partidas (Cola)";
-        cout << "\n3. Modulo de Historial (Pila)";
-        cout << "\n4. Reporte general";
-        cout << "\n5. Salir";
-        cout << "\nSeleccione una opcion: ";
+        cout << "\n=========================================\n";
+        cout << "         SISTEMA TORNEO E-SPORTS         \n";
+        cout << "=========================================\n";
+        cout << "  [1] Modulo de Jugadores (Lista)\n";
+        cout << "  [2] Modulo de Partidas (Cola)\n";
+        cout << "  [3] Modulo de Historial (Pila)\n";
+        cout << "  [4] Reporte general del sistema\n";
+        cout << "  [5] Salir\n";
+        cout << "-----------------------------------------\n";
+        cout << "Seleccione una opcion: ";
         cin >> opcion;
 
         switch(opcion) {
-
-            case 1:
-                subMenuJugadores(&jugadores);
-                break;
-
-            case 2:
-                subMenuPartidas(&partidas, &jugadores);
-                break;
-
-            case 3:
-                subMenuHistorial(&historial, &partidas);
-                break;
-
-            case 4:
-                reporteGeneral(&jugadores, &partidas, &historial);
-                break;
-
+            case 1: subMenuJugadores(&jugadores); break;
+            case 2: subMenuPartidas(&partidas, &jugadores); break;
+            case 3: subMenuHistorial(&historial, &partidas); break;
+            case 4: reporteGeneral(&jugadores, &partidas, &historial); break;
             case 5:
-                cout << "\nGracias por utilizar el sistema.\n";
+                cout << "\n=========================================\n";
+                cout << "   Gracias por utilizar el sistema.\n";
+                cout << "=========================================\n\n";
                 break;
-
             default:
-                cout << "\nOpcion incorrecta.\n";
+                cout << "\n[!] Opcion invalida.\n";
         }
 
     } while(opcion != 5);
