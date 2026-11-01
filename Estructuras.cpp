@@ -150,6 +150,7 @@ void registrarJugador(ListaJugadores *lista) {
 
     cout << "\nJugador registrado correctamente.\n";
 }
+
 void actualizarJugador(ListaJugadores* lista) {
     if (lista->tamano == 0) {
         cout << "\n--- No hay jugadores para actualizar. ---\n";
@@ -485,7 +486,104 @@ void reporteGeneral(
     cout << "\n==========================";
 }
 
-// MAIN
+//=====================================================
+// SUBMENÚS
+//=====================================================
+
+void subMenuJugadores(ListaJugadores *jugadores) {
+    int subOpcion;
+    do {
+        cout << "\n\n--- GESTION DE JUGADORES (LISTAS) ---";
+        cout << "\n1. Registrar jugador";
+        cout << "\n2. Buscar jugador por ID";
+        cout << "\n3. Actualizar jugador";
+        cout << "\n4. Retirar jugador";
+        cout << "\n5. Mostrar jugadores";
+        cout << "\n6. Volver al menu principal";
+        cout << "\nSeleccione una opcion: ";
+        cin >> subOpcion;
+
+        switch(subOpcion) {
+            case 1:
+                registrarJugador(jugadores);
+                break;
+            case 2:
+                buscarJugadorUI(jugadores);
+                break;
+            case 3:
+                actualizarJugador(jugadores);
+                break;
+            case 4:
+                retirarJugador(jugadores);
+                break;
+            case 5:
+                mostrarJugadores(jugadores);
+                break;
+            case 6:
+                cout << "\nRegresando al menu principal...\n";
+                break;
+            default:
+                cout << "\nOpcion incorrecta.\n";
+        }
+    } while(subOpcion != 6);
+}
+
+void subMenuPartidas(ColaPartidas *partidas, ListaJugadores *jugadores) {
+    int subOpcion;
+    do {
+        cout << "\n\n--- GESTION DE PARTIDAS (COLAS) ---";
+        cout << "\n1. Programar partida";
+        cout << "\n2. Mostrar partidas pendientes";
+        cout << "\n3. Volver al menu principal";
+        cout << "\nSeleccione una opcion: ";
+        cin >> subOpcion;
+
+        switch(subOpcion) {
+            case 1:
+                programarPartida(partidas, jugadores);
+                break;
+            case 2:
+                mostrarPartidas(partidas);
+                break;
+            case 3:
+                cout << "\nRegresando al menu principal...\n";
+                break;
+            default:
+                cout << "\nOpcion incorrecta.\n";
+        }
+    } while(subOpcion != 3);
+}
+
+void subMenuHistorial(PilaHistorial *historial, ColaPartidas *partidas) {
+    int subOpcion;
+    do {
+        cout << "\n\n--- HISTORIAL DE RESULTADOS (PILAS) ---";
+        cout << "\n1. Registrar resultado de partida";
+        cout << "\n2. Ver historial de resultados";
+        cout << "\n3. Volver al menu principal";
+        cout << "\nSeleccione una opcion: ";
+        cin >> subOpcion;
+
+        switch(subOpcion) {
+            case 1:
+                registrarResultado(partidas, historial);
+                break;
+            case 2:
+                mostrarHistorial(historial);
+                break;
+            case 3:
+                cout << "\nRegresando al menu principal...\n";
+                break;
+            default:
+                cout << "\nOpcion incorrecta.\n";
+        }
+    } while(subOpcion != 3);
+}
+
+//=====================================================
+// MAIN (MENÚ PRINCIPAL)
+//=====================================================
+
 int main() {
 
     ListaJugadores jugadores;
@@ -501,63 +599,33 @@ int main() {
     do {
 
         cout << "\n\n========== TORNEO E-SPORTS ==========";
-        cout << "\n1. Registrar jugador";
-        cout << "\n2. Buscar jugador por ID";
-        cout << "\n3. Actualizar jugador";
-        cout << "\n4. Retirar jugador";
-        cout << "\n5. Mostrar jugadores";
-        cout << "\n6. Programar partida";
-        cout << "\n7. Mostrar partidas";
-        cout << "\n8. Registrar resultado";
-        cout << "\n9. Ver historial";
-        cout << "\n10. Reporte general";
-        cout << "\n11. Salir";
+        cout << "\n1. Modulo de Jugadores (Lista)";
+        cout << "\n2. Modulo de Partidas (Cola)";
+        cout << "\n3. Modulo de Historial (Pila)";
+        cout << "\n4. Reporte general";
+        cout << "\n5. Salir";
         cout << "\nSeleccione una opcion: ";
         cin >> opcion;
 
         switch(opcion) {
 
             case 1:
-                registrarJugador(&jugadores);
+                subMenuJugadores(&jugadores);
                 break;
 
             case 2:
-                buscarJugadorUI(&jugadores);
+                subMenuPartidas(&partidas, &jugadores);
                 break;
 
             case 3:
-                actualizarJugador(&jugadores);
+                subMenuHistorial(&historial, &partidas);
                 break;
 
             case 4:
-                retirarJugador(&jugadores);
-                break;
-
-            case 5:
-                mostrarJugadores(&jugadores);
-                break;
-
-            case 6:
-                programarPartida(&partidas, &jugadores);
-                break;
-
-            case 7:
-                mostrarPartidas(&partidas);
-                break;
-
-            case 8:
-                registrarResultado(&partidas, &historial);
-                break;
-
-            case 9:
-                mostrarHistorial(&historial);
-                break;
-
-            case 10:
                 reporteGeneral(&jugadores, &partidas, &historial);
                 break;
 
-            case 11:
+            case 5:
                 cout << "\nGracias por utilizar el sistema.\n";
                 break;
 
@@ -565,7 +633,7 @@ int main() {
                 cout << "\nOpcion incorrecta.\n";
         }
 
-    } while(opcion != 11);
+    } while(opcion != 5);
 
     return 0;
 }
