@@ -1,5 +1,7 @@
+
 #include <iostream>
 #include <cstring>
+#include <fstream> 
 
 #define MAX 50
 
@@ -11,7 +13,7 @@ using namespace std;
 
 struct Jugador {
     int idJugador;
-    char alias[50];
+    char alias[30];
     char nombre[50];
     int ranking;
 };
@@ -79,7 +81,12 @@ void buscarJugadorUI(ListaJugadores *lista) {
     }
     int id;
     cout << "\nIngrese el ID a buscar: ";
-    cin >> id;
+    while (!(cin >> id)) {
+        cout << "[!] Ingrese un numero valido para el ID: ";
+        cin.clear();
+        cin.ignore(10000, '\n');
+    }
+
     int pos = buscarJugador(lista, id);
     if(pos != -1) {
         cout << "\n+---------------------------------------+";
@@ -119,7 +126,7 @@ void registrarJugador(ListaJugadores *lista) {
         return;
     }
 
-    cin.ignore();
+    cin.ignore(10000, '\n');
     cout << "Alias          : ";
     cin.getline(nuevo.alias, 30);
 
@@ -147,13 +154,17 @@ void actualizarJugador(ListaJugadores* lista) {
 
     int id;
     cout << "\nIngrese el ID del jugador a actualizar: ";
-    cin >> id;
+    while (!(cin >> id)) {
+        cout << "[!] Ingrese un numero valido: ";
+        cin.clear();
+        cin.ignore(10000, '\n');
+    }
 
     for (int i = 0; i < lista->tamano; i++) {
         Jugador* ptrJ = &lista->elementos[i];
         if (ptrJ->idJugador == id) {
             cout << "\n--- Ingrese los nuevos datos ---\n";
-            cin.ignore();
+            cin.ignore(10000, '\n');
             cout << "Nuevo Alias  : ";
             cin.getline(ptrJ->alias, 30);
 
@@ -161,7 +172,11 @@ void actualizarJugador(ListaJugadores* lista) {
             cin.getline(ptrJ->nombre, 50);
 
             cout << "Nuevo Ranking: ";
-            cin >> ptrJ->ranking;
+            while (!(cin >> ptrJ->ranking)) {
+                cout << "[!] Ingrese un numero valido: ";
+                cin.clear();
+                cin.ignore(10000, '\n');
+            }
 
             cout << "\n[V] Jugador actualizado con exito.\n";
             return;
@@ -178,7 +193,11 @@ bool retirarJugador(ListaJugadores* lista) {
 
     int id;
     cout << "\nIngrese ID a retirar: ";
-    cin >> id;
+    while (!(cin >> id)) {
+        cout << "[!] Ingrese un numero valido: ";
+        cin.clear();
+        cin.ignore(10000, '\n');
+    }
 
     for (int i = 0; i < lista->tamano; i++) {
         Jugador* ptrJ = &lista->elementos[i];
@@ -214,6 +233,31 @@ void mostrarJugadores(ListaJugadores *lista) {
              << " | Ranking: " << lista->elementos[i].ranking << " pts\n";
         cout << "---------------------------------------------------------\n";
     }
+}
+
+// FUNCION PARA GUARDAR JUGADORES EN EXCEL (.CSV)
+void guardarJugadoresCSV(ListaJugadores *lista) {
+    if (lista->tamano == 0) {
+        cout << "\n[!] No hay jugadores para exportar a Excel.\n";
+        return;
+    }
+
+    ofstream archivo("jugadores.csv");
+    if (!archivo.is_open()) {
+        cout << "\n[X] Error al crear el archivo Excel.\n";
+        return;
+    }
+
+    archivo << "ID;Alias;Nombre;Ranking\n";
+    for (int i = 0; i < lista->tamano; i++) {
+        archivo << lista->elementos[i].idJugador << ";"
+                << lista->elementos[i].alias << ";"
+                << lista->elementos[i].nombre << ";"
+                << lista->elementos[i].ranking << "\n";
+    }
+
+    archivo.close();
+    cout << "\n[V] Jugadores exportados exitosamente a 'jugadores.csv'.\n";
 }
 
 //=====================================================
@@ -281,7 +325,6 @@ void programarPartida(ColaPartidas *cola, ListaJugadores *lista) {
 
     cout << "\n>>> PROGRAMAR NUEVA PARTIDA <<<\n";
     
-    // Validación para ID Partida
     cout << "ID Partida   : ";
     while (!(cin >> partida.idPartida)) {
         cout << "[!] Error: Ingrese un numero entero valido para ID Partida: ";
@@ -289,7 +332,6 @@ void programarPartida(ColaPartidas *cola, ListaJugadores *lista) {
         cin.ignore(10000, '\n');
     }
 
-    // Validación para ID Jugador 1
     cout << "ID Jugador 1 : ";
     while (!(cin >> id1)) {
         cout << "[!] Error: Ingrese un numero entero valido para ID Jugador 1: ";
@@ -297,7 +339,6 @@ void programarPartida(ColaPartidas *cola, ListaJugadores *lista) {
         cin.ignore(10000, '\n');
     }
 
-    // Validación para ID Jugador 2
     cout << "ID Jugador 2 : ";
     while (!(cin >> id2)) {
         cout << "[!] Error: Ingrese un numero entero valido para ID Jugador 2: ";
@@ -320,6 +361,32 @@ void programarPartida(ColaPartidas *cola, ListaJugadores *lista) {
     encolarPartida(cola, partida);
     cout << "\n[V] Partida programada correctamente.\n";
 }
+
+// FUNCION PARA GUARDAR PARTIDAS EN EXCEL (.CSV)
+void guardarPartidasCSV(ColaPartidas *cola) {
+    if (colaVacia(cola)) {
+        cout << "\n[!] No hay partidas pendientes para exportar.\n";
+        return;
+    }
+
+    ofstream archivo("partidas_pendientes.csv");
+    if (!archivo.is_open()) {
+        cout << "\n[X] Error al crear el archivo Excel.\n";
+        return;
+    }
+
+    archivo << "ID Partida;Jugador 1;Jugador 2;Estado\n";
+    for (int i = cola->frente; i <= cola->final; i++) {
+        archivo << cola->elementos[i].idPartida << ";"
+                << cola->elementos[i].jugador1.alias << ";"
+                << cola->elementos[i].jugador2.alias << ";"
+                << cola->elementos[i].estado << "\n";
+    }
+
+    archivo.close();
+    cout << "\n[V] Partidas pendientes exportadas exitosamente a 'partidas_pendientes.csv'.\n";
+}
+
 //=====================================================
 // MÓDULO PILA (HISTORIAL)
 //=====================================================
@@ -373,10 +440,18 @@ void registrarResultado(ColaPartidas *cola, PilaHistorial *historial) {
          << actual.jugador1.alias << " VS " << actual.jugador2.alias << "\n\n";
 
     cout << "Puntaje " << actual.jugador1.alias << " (J1): ";
-    cin >> resultado.puntajeJ1;
+    while (!(cin >> resultado.puntajeJ1)) {
+        cout << "[!] Ingrese un numero valido para el puntaje: ";
+        cin.clear();
+        cin.ignore(10000, '\n');
+    }
 
     cout << "Puntaje " << actual.jugador2.alias << " (J2): ";
-    cin >> resultado.puntajeJ2;
+    while (!(cin >> resultado.puntajeJ2)) {
+        cout << "[!] Ingrese un numero valido para el puntaje: ";
+        cin.clear();
+        cin.ignore(10000, '\n');
+    }
 
     if(resultado.puntajeJ1 > resultado.puntajeJ2) {
         resultado.idGanador = actual.jugador1.idJugador;
@@ -386,6 +461,31 @@ void registrarResultado(ColaPartidas *cola, PilaHistorial *historial) {
 
     pushResultado(historial, resultado);
     cout << "\n[V] Resultado registrado correctamente.\n";
+}
+
+// FUNCION PARA GUARDAR HISTORIAL EN EXCEL (.CSV)
+void guardarHistorialCSV(PilaHistorial *pila) {
+    if (pilaVacia(pila)) {
+        cout << "\n[!] No hay resultados en el historial para exportar.\n";
+        return;
+    }
+
+    ofstream archivo("historial_resultados.csv");
+    if (!archivo.is_open()) {
+        cout << "\n[X] Error al crear el archivo Excel.\n";
+        return;
+    }
+
+    archivo << "ID Partida;ID Ganador;Puntaje J1;Puntaje J2\n";
+    for (int i = pila->tope; i >= 0; i--) {
+        archivo << pila->elementos[i].idPartida << ";"
+                << pila->elementos[i].idGanador << ";"
+                << pila->elementos[i].puntajeJ1 << ";"
+                << pila->elementos[i].puntajeJ2 << "\n";
+    }
+
+    archivo.close();
+    cout << "\n[V] Historial exportado exitosamente a 'historial_resultados.csv'.\n";
 }
 
 //=====================================================
@@ -408,7 +508,7 @@ void reporteGeneral(ListaJugadores *lista, ColaPartidas *cola, PilaHistorial *hi
 }
 
 //=====================================================
-// SUBMENÚS
+// SUBMENÚS CON PROTECCIÓN Y EXPORTACIÓN A EXCEL
 //=====================================================
 
 void subMenuJugadores(ListaJugadores *jugadores) {
@@ -422,10 +522,18 @@ void subMenuJugadores(ListaJugadores *jugadores) {
         cout << "  [3] Actualizar jugador\n";
         cout << "  [4] Retirar jugador\n";
         cout << "  [5] Mostrar todos los jugadores\n";
-        cout << "  [6] Volver al menu principal\n";
+        cout << "  [6] Exportar lista a Excel (.csv)\n";
+        cout << "  [7] Volver al menu principal\n";
         cout << "-----------------------------------------\n";
         cout << "Seleccione una opcion: ";
-        cin >> subOpcion;
+
+        if (!(cin >> subOpcion)) {
+            cout << "\n[!] Error: Ingrese solo numeros.\n";
+            cin.clear();
+            cin.ignore(10000, '\n');
+            subOpcion = 0;
+            continue;
+        }
 
         switch(subOpcion) {
             case 1: registrarJugador(jugadores); break;
@@ -433,10 +541,11 @@ void subMenuJugadores(ListaJugadores *jugadores) {
             case 3: actualizarJugador(jugadores); break;
             case 4: retirarJugador(jugadores); break;
             case 5: mostrarJugadores(jugadores); break;
-            case 6: cout << "\nRegresando al menu principal...\n"; break;
+            case 6: guardarJugadoresCSV(jugadores); break;
+            case 7: cout << "\nRegresando al menu principal...\n"; break;
             default: cout << "\n[!] Opcion invalida.\n";
         }
-    } while(subOpcion != 6);
+    } while(subOpcion != 7);
 }
 
 void subMenuPartidas(ColaPartidas *partidas, ListaJugadores *jugadores) {
@@ -447,26 +556,27 @@ void subMenuPartidas(ColaPartidas *partidas, ListaJugadores *jugadores) {
         cout << "=========================================\n";
         cout << "  [1] Programar partida\n";
         cout << "  [2] Mostrar partidas pendientes\n";
-        cout << "  [3] Volver al menu principal\n";
+        cout << "  [3] Exportar partidas a Excel (.csv)\n";
+        cout << "  [4] Volver al menu principal\n";
         cout << "-----------------------------------------\n";
         cout << "Seleccione una opcion: ";
-        
-        // Validación contra letras en la selección del menú
+
         if (!(cin >> subOpcion)) {
             cout << "\n[!] Error: Ingrese solo numeros.\n";
             cin.clear();
             cin.ignore(10000, '\n');
-            subOpcion = 0; // Se asigna 0 para entrar a 'default' sin trabar el bucle
+            subOpcion = 0;
             continue;
         }
 
         switch(subOpcion) {
             case 1: programarPartida(partidas, jugadores); break;
             case 2: mostrarPartidas(partidas); break;
-            case 3: cout << "\nRegresando al menu principal...\n"; break;
+            case 3: guardarPartidasCSV(partidas); break;
+            case 4: cout << "\nRegresando al menu principal...\n"; break;
             default: cout << "\n[!] Opcion invalida.\n";
         }
-    } while(subOpcion != 3);
+    } while(subOpcion != 4);
 }
 
 void subMenuHistorial(PilaHistorial *historial, ColaPartidas *partidas) {
@@ -477,18 +587,27 @@ void subMenuHistorial(PilaHistorial *historial, ColaPartidas *partidas) {
         cout << "=========================================\n";
         cout << "  [1] Registrar resultado de partida\n";
         cout << "  [2] Ver historial de resultados\n";
-        cout << "  [3] Volver al menu principal\n";
+        cout << "  [3] Exportar historial a Excel (.csv)\n";
+        cout << "  [4] Volver al menu principal\n";
         cout << "-----------------------------------------\n";
         cout << "Seleccione una opcion: ";
-        cin >> subOpcion;
+
+        if (!(cin >> subOpcion)) {
+            cout << "\n[!] Error: Ingrese solo numeros.\n";
+            cin.clear();
+            cin.ignore(10000, '\n');
+            subOpcion = 0;
+            continue;
+        }
 
         switch(subOpcion) {
             case 1: registrarResultado(partidas, historial); break;
             case 2: mostrarHistorial(historial); break;
-            case 3: cout << "\nRegresando al menu principal...\n"; break;
+            case 3: guardarHistorialCSV(historial); break;
+            case 4: cout << "\nRegresando al menu principal...\n"; break;
             default: cout << "\n[!] Opcion invalida.\n";
         }
-    } while(subOpcion != 3);
+    } while(subOpcion != 4);
 }
 
 //=====================================================
@@ -517,7 +636,14 @@ int main() {
         cout << "  [5] Salir\n";
         cout << "-----------------------------------------\n";
         cout << "Seleccione una opcion: ";
-        cin >> opcion;
+
+        if (!(cin >> opcion)) {
+            cout << "\n[!] Error: Ingrese solo numeros.\n";
+            cin.clear();
+            cin.ignore(10000, '\n');
+            opcion = 0;
+            continue;
+        }
 
         switch(opcion) {
             case 1: subMenuJugadores(&jugadores); break;
