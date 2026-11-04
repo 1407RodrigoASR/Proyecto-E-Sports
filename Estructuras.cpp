@@ -280,14 +280,30 @@ void programarPartida(ColaPartidas *cola, ListaJugadores *lista) {
     int id1, id2;
 
     cout << "\n>>> PROGRAMAR NUEVA PARTIDA <<<\n";
+    
+    // Validación para ID Partida
     cout << "ID Partida   : ";
-    cin >> partida.idPartida;
+    while (!(cin >> partida.idPartida)) {
+        cout << "[!] Error: Ingrese un numero entero valido para ID Partida: ";
+        cin.clear();
+        cin.ignore(10000, '\n');
+    }
 
+    // Validación para ID Jugador 1
     cout << "ID Jugador 1 : ";
-    cin >> id1;
+    while (!(cin >> id1)) {
+        cout << "[!] Error: Ingrese un numero entero valido para ID Jugador 1: ";
+        cin.clear();
+        cin.ignore(10000, '\n');
+    }
 
+    // Validación para ID Jugador 2
     cout << "ID Jugador 2 : ";
-    cin >> id2;
+    while (!(cin >> id2)) {
+        cout << "[!] Error: Ingrese un numero entero valido para ID Jugador 2: ";
+        cin.clear();
+        cin.ignore(10000, '\n');
+    }
 
     int pos1 = buscarJugador(lista, id1);
     int pos2 = buscarJugador(lista, id2);
@@ -304,7 +320,6 @@ void programarPartida(ColaPartidas *cola, ListaJugadores *lista) {
     encolarPartida(cola, partida);
     cout << "\n[V] Partida programada correctamente.\n";
 }
-
 //=====================================================
 // MÓDULO PILA (HISTORIAL)
 //=====================================================
