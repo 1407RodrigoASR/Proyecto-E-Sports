@@ -450,7 +450,15 @@ void subMenuPartidas(ColaPartidas *partidas, ListaJugadores *jugadores) {
         cout << "  [3] Volver al menu principal\n";
         cout << "-----------------------------------------\n";
         cout << "Seleccione una opcion: ";
-        cin >> subOpcion;
+        
+        // Validación contra letras en la selección del menú
+        if (!(cin >> subOpcion)) {
+            cout << "\n[!] Error: Ingrese solo numeros.\n";
+            cin.clear();
+            cin.ignore(10000, '\n');
+            subOpcion = 0; // Se asigna 0 para entrar a 'default' sin trabar el bucle
+            continue;
+        }
 
         switch(subOpcion) {
             case 1: programarPartida(partidas, jugadores); break;
